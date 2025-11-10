@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Category;
+use App\Models\Brand;
 use Maatwebsite\Excel\Concerns\{
     FromCollection,
     WithHeadings,
@@ -15,23 +15,24 @@ use Maatwebsite\Excel\Concerns\{
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class CategoriesExport implements FromCollection, WithHeadings, WithMapping, WithCustomStartCell, ShouldAutoSize, WithStyles, WithEvents
+class BrandsExport implements FromCollection, WithHeadings, WithMapping, WithCustomStartCell, ShouldAutoSize, WithStyles, WithEvents
 {
     public function collection()
     {
-        return Category::with('parent')
-            ->select('id', 'name', 'slug', 'parent_id', 'created_at')
+        return Brand::select('id', 'name', 'slug', 'description', 'logo', 'created_at')
             ->orderBy('id')
             ->get();
     }
 
+    /** ✅ Tiêu đề trùng tên trường trong DB */
     public function headings(): array
     {
         return [
             'id',
             'name',
             'slug',
-            'parent_name',
+            'description',
+            'logo',
             'created_at',
         ];
     }
@@ -42,8 +43,9 @@ class CategoriesExport implements FromCollection, WithHeadings, WithMapping, Wit
             $row->id,
             $row->name,
             $row->slug,
-            $row->parent->name ?? '(Không có)',
-            $row->created_at->format('Y-m-d H:i:s'),
+            $row->description,
+            $row->logo,
+            optional($row->created_at)->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -54,10 +56,9 @@ class CategoriesExport implements FromCollection, WithHeadings, WithMapping, Wit
 
     public function styles(Worksheet $sheet)
     {
-        // Header row đậm và căn giữa
-        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
-
+        // Đậm hàng tiêu đề, căn giữa
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:F1')->getAlignment()->setHorizontal('center');
         return [];
     }
 
@@ -67,22 +68,17 @@ class CategoriesExport implements FromCollection, WithHeadings, WithMapping, Wit
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                // Tự động canh giữa ID, Ngày tạo
-                $sheet->getStyle('A:E')->getAlignment()->setVertical('center');
+                // Căn giữa dọc
+                $sheet->getStyle('A:F')->getAlignment()->setVertical('center');
 
                 // Viền toàn bảng
-                $sheet->getStyle('A1:E' . $sheet->getHighestRow())
+                $sheet->getStyle('A1:F' . $sheet->getHighestRow())
                     ->getBorders()->getAllBorders()->setBorderStyle('thin');
 
-                // Màu nền tiêu đề
-                $sheet->getStyle('A1:E1')->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFD6EAF8');
+                // Font mặc định
+                $sheet->getStyle('A:F')->getFont()->setName('Calibri')->setSize(12);
 
-                // Font chữ chung
-                $sheet->getStyle('A:E')->getFont()->setName('Calibri')->setSize(12);
-
-                // Freeze hàng tiêu đề
+                // Freeze hàng đầu
                 $sheet->freezePane('A2');
             },
         ];

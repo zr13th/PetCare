@@ -29,7 +29,7 @@ class CategoryController extends Controller
             $query->where('parent_id', $parentId);
         }
 
-        $categories = $query->orderBy('id', 'desc')->paginate(3);
+        $categories = $query->orderBy('id', 'desc')->paginate(10);
         $categories->appends($request->only(['search', 'parent_id']));
 
         // Lấy tất cả danh mục cha cho dropdown lọc

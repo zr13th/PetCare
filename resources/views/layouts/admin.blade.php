@@ -11,10 +11,10 @@
 
     {{-- Bootstrap + Font Awesome --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('vendor/font-awesome/css/all.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/vendor/font-awesome/css/all.min.css') }}" />
 
     {{-- Custom CSS pastel --}}
-    <link href="{{ asset('asset/css/admin-style.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/asset/css/admin-style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 

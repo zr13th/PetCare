@@ -25,7 +25,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/categories/export', [CategoryController::class, 'export'])->name('categories.export');
     Route::resource('categories', CategoryController::class);
 
+    Route::post('/brands/import', [BrandController::class, 'import'])->name('brands.import');
+    Route::get('/brands/export', [BrandController::class, 'export'])->name('brands.export');
     Route::resource('brands', BrandController::class);
+
     Route::resource('products', ProductController::class);
     Route::resource('tags', TagController::class);
 });

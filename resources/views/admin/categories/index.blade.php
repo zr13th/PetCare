@@ -13,7 +13,7 @@
             <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
                 placeholder="Tìm theo tên hoặc slug...">
 
-            <select name="parent_id" class="form-select form-select-sm" style="width:150px;">
+            <select name="parent_id" class="form-select form-select-sm" style="width:250px;">
                 <option value="">Tất cả danh mục cha</option>
                 @foreach($parents as $p)
                 <option value="{{ $p->id }}" {{ request('parent_id') == $p->id ? 'selected' : '' }}>
