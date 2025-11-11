@@ -29,6 +29,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/brands/export', [BrandController::class, 'export'])->name('brands.export');
     Route::resource('brands', BrandController::class);
 
-    Route::resource('products', ProductController::class);
+    Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
+    Route::patch('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])
+        ->name('products.toggle-status');
+    Route::get('products/image/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'showImage'])->name('products.image');
+    Route::post('products/import', [\App\Http\Controllers\Admin\ProductController::class, 'import'])->name('products.import');
+    Route::get('products/export', [\App\Http\Controllers\Admin\ProductController::class, 'export'])->name('products.export');
+
+
     Route::resource('tags', TagController::class);
 });

@@ -16,6 +16,8 @@
     {{-- Custom CSS pastel --}}
     <link href="{{ asset('public/asset/css/admin-style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    @stack('styles')
 </head>
 
 <body>
@@ -34,19 +36,19 @@
                 </a>
                 <a class="nav-link {{ request()->is('admin/products*') ? 'active' : '' }}"
                     href="{{ route('admin.products.index') }}">
-                    <i class="fa-solid fa-box-open me-2"></i> Sản phẩm
+                    <i class="fa-regular fa-box-isometric"></i> Sản phẩm
                 </a>
                 <a class="nav-link {{ request()->is('admin/categories*') ? 'active' : '' }}"
                     href="{{ route('admin.categories.index') }}">
-                    <i class="fa-regular fa-layer-group"></i></i> Danh mục
+                    <i class="fa-regular fa-layer-group"></i> Danh mục
                 </a>
                 <a class="nav-link {{ request()->is('admin/brands*') ? 'active' : '' }}"
                     href="{{ route('admin.brands.index') }}">
-                    <i class="fa-solid fa-tag me-2"></i> Thương hiệu
+                    <i class="fa-regular fa-tags"></i> Thương hiệu
                 </a>
                 <a class="nav-link {{ request()->is('admin/tags*') ? 'active' : '' }}"
                     href="{{ route('admin.tags.index') }}">
-                    <i class="fa-solid fa-tags me-2"></i> Tag
+                    <i class="fa-regular fa-send-backward"></i> Tag
                 </a>
             </nav>
 
@@ -84,10 +86,57 @@
                 @yield('content')
             </div>
         </main>
+
+        {{-- =================== TOAST MESSAGE =================== --}}
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080">
+
+            {{-- Toast thành công --}}
+            @if (session('success'))
+            <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+                aria-atomic="true" id="toast-success">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+            @endif
+
+            {{-- Toast lỗi --}}
+            @if (session('error'))
+            <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+                aria-atomic="true" id="toast-error">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fa fa-circle-exclamation me-2"></i> {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+            @endif
+        </div>
+        {{-- =================== /TOAST MESSAGE =================== --}}
     </div>
 
     {{-- JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- Script hiển thị Toast --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            toastElList.forEach(toastEl => {
+                const toast = new bootstrap.Toast(toastEl, {
+                    delay: 2000,
+                    autohide: true
+                });
+                toast.show();
+            });
+        });
+    </script>
 
     @stack('scripts')
 

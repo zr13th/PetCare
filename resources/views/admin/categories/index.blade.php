@@ -28,33 +28,26 @@
 
         <!-- Nhóm nút hành động -->
         <div class="d-flex align-items-center gap-2 flex-wrap">
-            <!-- Nút mở Modal Import -->
-            <a type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" title="Nhập Excel"
-                data-bs-target="#importModal">
+            <!-- Import -->
+            <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
+                data-bs-target="#importModal" title="Nhập Excel">
                 <i class="fa fa-upload"></i>
-            </a>
+            </button>
 
-            <!-- Export Excel -->
+            <!-- Export -->
             <a href="{{ route('admin.categories.export') }}" class="btn btn-sm btn-outline-success" title="Xuất Excel">
                 <i class="fa fa-file-excel"></i>
             </a>
 
             <!-- Thêm mới -->
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-primary px-3">
+            <button type="button" class="btn btn-sm btn-primary px-3" data-bs-toggle="modal"
+                data-bs-target="#createModal">
                 + Thêm
-            </a>
+            </button>
         </div>
-
     </div>
 
-
-    {{-- Thông báo --}}
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif
+    {{-- Không cần alert vì Toast hiển thị ở layout --}}
 
     {{ $categories->links('pagination::bootstrap-5') }}
 
@@ -76,17 +69,19 @@
                 <td>{{ $cat->slug }}</td>
                 <td>{{ $cat->parent?->name ?? '—' }}</td>
                 <td class="text-center">
-                    <a href="{{ route('admin.categories.edit', $cat) }}" class="btn btn-sm btn-outline-secondary">
+                    <!-- Sửa -->
+                    <button type="button" class="btn btn-sm btn-outline-secondary editBtn" data-id="{{ $cat->id }}"
+                        data-name="{{ $cat->name }}" data-parent="{{ $cat->parent_id ?? '' }}" data-bs-toggle="modal"
+                        data-bs-target="#editModal">
                         <i class="fa fa-edit"></i>
-                    </a>
+                    </button>
 
-                    <!-- Nút mở modal -->
-                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                        data-bs-target="#deleteModal" data-id="{{ $cat->id }}" data-name="{{ $cat->name }}">
+                    <!-- Xóa -->
+                    <button type="button" class="btn btn-sm btn-outline-danger deleteBtn" data-id="{{ $cat->id }}"
+                        data-name="{{ $cat->name }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <i class="fa fa-trash"></i>
                     </button>
                 </td>
-
             </tr>
             @empty
             <tr>
@@ -99,14 +94,95 @@
     {{ $categories->links('pagination::bootstrap-5') }}
 </div>
 
-<!-- Modal Xác nhận Xóa -->
+<!-- ================= MODALS ================= -->
+
+<!-- Modal: Thêm -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{{ route('admin.categories.store') }}" method="POST" novalidate>
+                @csrf
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fa fa-plus-circle me-1"></i> Thêm danh mục mới</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" name="name" value="{{ old('name') }}"
+                            class="form-control @error('name') is-invalid @enderror" required>
+                        @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Danh mục cha</label>
+                        <select name="parent_id" class="form-select @error('parent_id') is-invalid @enderror">
+                            <option value="">— Không có —</option>
+                            @foreach($parents as $parent)
+                            <option value="{{ $parent->id }}" {{ old('parent_id') == $parent->id ? 'selected' : '' }}>
+                                {{ $parent->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('parent_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Sửa -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editForm" method="POST" novalidate>
+                @csrf
+                @method('PUT')
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title"><i class="fa fa-edit me-1"></i> Sửa danh mục</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="editName"
+                            class="form-control @error('name') is-invalid @enderror" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Danh mục cha</label>
+                        <select name="parent_id" id="editParent"
+                            class="form-select @error('parent_id') is-invalid @enderror">
+                            <option value="">— Không có —</option>
+                            @foreach($parents as $parent)
+                            <option value="{{ $parent->id }}">{{ $parent->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-secondary">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Xóa -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <p>Bạn có chắc muốn xóa danh mục <strong id="deleteName"></strong>?</p>
@@ -123,23 +199,20 @@
     </div>
 </div>
 
-<!-- Modal Import Excel -->
+<!-- Modal: Import Excel -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form action="{{ route('admin.categories.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="importModalLabel"><i class="fa fa-upload"></i> Nhập danh mục từ Excel
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <h5 class="modal-title"><i class="fa fa-upload me-1"></i> Nhập danh mục từ Excel</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="file" class="form-label fw-semibold">Chọn file Excel</label>
-                        <input type="file" name="file" id="file" accept=".xlsx,.xls,.csv"
+                        <input type="file" name="file" accept=".xlsx,.xls,.csv"
                             class="form-control @error('file') is-invalid @enderror" required>
                         @error('file')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -147,7 +220,6 @@
                         <div class="form-text">Hỗ trợ: .xlsx, .xls, .csv</div>
                     </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="submit" class="btn btn-success">Nhập</button>
@@ -156,32 +228,45 @@
         </div>
     </div>
 </div>
-
-
 @endsection
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Gán URL xóa
         const deleteModal = document.getElementById('deleteModal');
-        deleteModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
+        deleteModal.addEventListener('show.bs.modal', e => {
+            const button = e.relatedTarget;
             const id = button.getAttribute('data-id');
             const name = button.getAttribute('data-name');
-            console.log(name)
             deleteModal.querySelector('#deleteName').textContent = name;
+            deleteModal.querySelector('#deleteForm').action = `{{ url('admin/categories') }}/${id}`;
+        });
 
-            const form = deleteModal.querySelector('#deleteForm');
-            form.action = `/admin/categories/${id}`;
+        // Gán dữ liệu edit
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', e => {
+            const btn = e.relatedTarget;
+            const id = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
+            const parent = btn.getAttribute('data-parent');
+            editModal.querySelector('#editName').value = name;
+            editModal.querySelector('#editParent').value = parent || '';
+            editModal.querySelector('#editForm').action = `{{ url('admin/categories') }}/${id}`;
         });
     });
 </script>
 
+{{-- Hiển thị lại modal khi có lỗi --}}
 @error('file')
 <script>
-    const importModal = new bootstrap.Modal(document.getElementById('importModal'))
-    importModal.show();
+    new bootstrap.Modal(document.getElementById('importModal')).show();
 </script>
 @enderror
 
+@error('name')
+<script>
+    new bootstrap.Modal(document.getElementById('createModal')).show();
+</script>
+@enderror
 @endpush
