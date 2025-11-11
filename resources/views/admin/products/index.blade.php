@@ -57,15 +57,16 @@
     <table class="table table-bordered table-hover align-middle table-sm">
         <thead class="table-light">
             <tr>
-                <th>#</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Danh mục</th>
-                <th>Thương hiệu</th>
-                <th>Giá</th>
-                <th>Tồn</th>
-                <th>T.thái</th>
-                <th class="text-center">Thao tác</th>
+                <th style="width: 4%;">#</th>
+                <th style="width: 7%;">Ảnh</th>
+                <th style="width: 20%;">Tên sản phẩm</th>
+                <th style="width: 12%;">Danh mục</th>
+                <th style="width: 12%;">Thương hiệu</th>
+                <th style="width: 15%;">Tags</th>
+                <th style="width: 8%;">Giá</th>
+                <th style="width: 6%;">Tồn</th>
+                <th style="width: 6%;">T.thái</th>
+                <th style="width: 10%;" class="text-center">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -83,6 +84,13 @@
                 <td>{{ $p->name }}</td>
                 <td>{{ $p->category?->name ?? '—' }}</td>
                 <td>{{ $p->brand?->name ?? '—' }}</td>
+                <td>
+                    @forelse($p->tags as $tag)
+                    <span class="badge bg-warning text-dark">{{ $tag->name }}</span>
+                    @empty
+                    <span class="text-muted small">—</span>
+                    @endforelse
+                </td>
                 <td>{{ number_format($p->price, 0, ',', '.') }} đ</td>
                 <td>{{ $p->stock }}</td>
                 <td class="text-center">
@@ -96,7 +104,8 @@
                         data-bs-target="#editModal" data-id="{{ $p->id }}" data-name="{{ $p->name }}"
                         data-category="{{ $p->category_id }}" data-brand="{{ $p->brand_id }}"
                         data-price="{{ $p->price }}" data-stock="{{ $p->stock }}"
-                        data-description="{{ $p->description }}" data-image="{{ $p->image }}">
+                        data-description="{{ $p->description }}" data-image="{{ $p->image }}"
+                        data-tags='@json($p->tags->pluck("id"))'>
                         <i class="fa fa-edit"></i>
                     </button>
 
@@ -108,7 +117,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="9" class="text-center text-muted">Không có dữ liệu</td>
+                <td colspan="10" class="text-center text-muted">Không có dữ liệu</td>
             </tr>
             @endforelse
         </tbody>
@@ -118,98 +127,14 @@
 </div>
 
 <!-- =============== MODALS =============== -->
-
-<!-- Thêm -->
-<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="fa fa-plus-circle me-1"></i> Thêm sản phẩm mới</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    @include('admin.products._form', ['mode' => 'create'])
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Sửa -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <form id="editForm" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-header bg-secondary text-white">
-                    <h5 class="modal-title"><i class="fa fa-edit me-1"></i> Sửa sản phẩm</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    @include('admin.products._form', ['mode' => 'edit'])
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Xóa -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Xác nhận xóa</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn có chắc muốn xóa sản phẩm <strong id="deleteName"></strong>?</p>
-            </div>
-            <div class="modal-footer">
-                <form id="deleteForm" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-danger">Xóa</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Import -->
-<div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form action="{{ route('admin.products.import') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title"><i class="fa fa-upload me-1"></i> Nhập sản phẩm từ Excel</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <label class="form-label fw-semibold">Chọn file Excel</label>
-                    <input type="file" name="file" accept=".xlsx,.xls,.csv"
-                        class="form-control @error('file') is-invalid @enderror" required>
-                    @error('file')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    <div class="form-text">Hỗ trợ: .xlsx, .xls, .csv</div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-success">Nhập</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+@include('admin.products._modals')
 @endsection
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Toggle trạng thái
+
+        // === Toggle trạng thái ===
         document.querySelectorAll('.toggle-status').forEach(input => {
             input.addEventListener('change', async () => {
                 const id = input.dataset.id;
@@ -230,7 +155,7 @@
             });
         });
 
-        // Xóa
+        // === Modal Xóa ===
         const deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', e => {
             const btn = e.relatedTarget;
@@ -239,7 +164,7 @@
                 `{{ url('admin/products') }}/${btn.dataset.id}`;
         });
 
-        // Sửa
+        // === Modal Sửa ===
         const editModal = document.getElementById('editModal');
         editModal.addEventListener('show.bs.modal', e => {
             const btn = e.relatedTarget;
@@ -252,6 +177,7 @@
             form.querySelector('[name="stock"]').value = btn.dataset.stock;
             form.querySelector('[name="description"]').value = btn.dataset.description || '';
 
+            // === Preview ảnh ===
             const preview = editModal.querySelector('#editPreviewImage');
             const text = editModal.querySelector('#editNoImageText');
             if (btn.dataset.image) {
@@ -262,9 +188,17 @@
                 preview.classList.add('d-none');
                 text.classList.remove('d-none');
             }
+
+            // === Tags (Tom Select) ===
+            const tags = JSON.parse(btn.dataset.tags || '[]');
+            const tagSelect = editModal.querySelector('#editTagsSelect');
+            if (tagSelect && tagSelect.tomselect) {
+                tagSelect.tomselect.clear();
+                tagSelect.tomselect.setValue(tags);
+            }
         });
 
-        // Reset preview khi đóng modal Thêm
+        // === Reset preview khi đóng modal thêm ===
         const createModal = document.getElementById('createModal');
         createModal.addEventListener('hidden.bs.modal', () => {
             const input = document.getElementById('createImageInput');
