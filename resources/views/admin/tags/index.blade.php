@@ -8,12 +8,16 @@
         <h4 class="fw-bold mb-0">Thẻ sản phẩm</h4>
 
         <!-- Tìm kiếm -->
-        <form action="{{ route('admin.tags.index') }}" method="GET" class="d-flex align-items-center gap-2 flex-wrap"
+        <form action="{{ route('admin.tags.index') }}" method="GET" class="d-flex align-items-center gap-2"
             style="max-width: 400px;">
             <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
                 placeholder="Tìm theo tên hoặc slug...">
-            <button type="submit" class="btn btn-sm btn-outline-primary">Tìm</button>
-            <a href="{{ route('admin.tags.index') }}" class="btn btn-sm btn-outline-secondary">Hủy</a>
+            <button type="submit" class="btn btn-sm btn-outline-primary">
+                <i class="fa-duotone fa-solid fa-filter-list"></i>
+            </button>
+            <a href="{{ route('admin.tags.index') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa-duotone fa-solid fa-rotate-reverse"></i>
+            </a>
         </form>
 
         <!-- Nút hành động -->
@@ -21,17 +25,19 @@
             <!-- Import -->
             <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
                 data-bs-target="#importModal" title="Nhập Excel">
-                <i class="fa fa-upload"></i>
+                <i class="fa-duotone fa-solid fa-upload"></i>
             </button>
 
             <!-- Export -->
             <a href="{{ route('admin.tags.export') }}" class="btn btn-sm btn-outline-success" title="Xuất Excel">
-                <i class="fa fa-file-excel"></i>
+                <i class="fa-duotone fa-solid fa-file-excel"></i>
             </a>
 
             <!-- Thêm -->
-            <button type="button" class="btn btn-sm btn-primary px-3" data-bs-toggle="modal"
-                data-bs-target="#createModal">+ Thêm</button>
+            <button type="button" class="btn btn-sm btn-outline-primary px-3" data-bs-toggle="modal"
+                data-bs-target="#createModal">
+                <i class="fa-duotone fa-light fa-plus-large"></i>
+            </button>
         </div>
     </div>
 
@@ -59,12 +65,12 @@
                     <button type="button" class="btn btn-sm btn-outline-secondary editBtn" data-id="{{ $tag->id }}"
                         data-name="{{ $tag->name }}" data-description="{{ $tag->description }}" data-bs-toggle="modal"
                         data-bs-target="#editModal">
-                        <i class="fa fa-edit"></i>
+                        <i class="fa-duotone fa-solid fa-edit"></i>
                     </button>
 
                     <button type="button" class="btn btn-sm btn-outline-danger deleteBtn" data-id="{{ $tag->id }}"
                         data-name="{{ $tag->name }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <i class="fa fa-trash"></i>
+                        <i class="fa-duotone fa-solid fa-trash"></i>
                     </button>
                 </td>
             </tr>

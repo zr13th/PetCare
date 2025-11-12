@@ -32,27 +32,27 @@
             <nav class="nav nav-pills flex-column gap-1">
                 <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                     href="{{ route('admin.dashboard') }}">
-                    <i class="fa-solid fa-chart-line me-2"></i> Tổng quan
+                    <i class="fa-duotone fa-solid fa-chart-line me-2"></i> Tổng quan
                 </a>
                 <a class="nav-link {{ request()->is('admin/products*') ? 'active' : '' }}"
                     href="{{ route('admin.products.index') }}">
-                    <i class="fa-regular fa-box-isometric"></i> Sản phẩm
+                    <i class="fa-duotone fa-solid fa-box-isometric"></i> Sản phẩm
                 </a>
                 <a class="nav-link {{ request()->is('admin/categories*') ? 'active' : '' }}"
                     href="{{ route('admin.categories.index') }}">
-                    <i class="fa-regular fa-layer-group"></i> Danh mục
+                    <i class="fa-duotone fa-solid fa-layer-group"></i> Danh mục
                 </a>
                 <a class="nav-link {{ request()->is('admin/brands*') ? 'active' : '' }}"
                     href="{{ route('admin.brands.index') }}">
-                    <i class="fa-regular fa-tags"></i> Thương hiệu
+                    <i class="fa-duotone fa-solid fa-tags"></i> Thương hiệu
                 </a>
                 <a class="nav-link {{ request()->is('admin/tags*') ? 'active' : '' }}"
                     href="{{ route('admin.tags.index') }}">
-                    <i class="fa-regular fa-send-backward"></i> Tag
+                    <i class="fa-duotone fa-solid fa-send-backward"></i> Tag
                 </a>
-                <a class="nav-link {{ request()->is('admin/tags*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->is('admin/user*') ? 'active' : '' }}"
                     href="{{ route('admin.users.index') }}">
-                    <i class="fa-regular fa-send-backward"></i> User
+                    <i class="fa-duotone fa-solid fa-users"></i> User
                 </a>
             </nav>
 

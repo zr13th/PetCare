@@ -9,7 +9,7 @@
 
         <!-- Bộ lọc -->
         <form action="{{ route('admin.products.index') }}" method="GET"
-            class="d-flex align-items-center gap-2 flex-wrap" style="max-width: 650px;">
+            class="d-flex align-items-center gap-2 flex-wrap" style="max-width: 450px;">
             <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
                 placeholder="Tìm theo tên hoặc slug...">
 
@@ -22,7 +22,7 @@
                 @endforeach
             </select>
 
-            <select name="brand_id" class="form-select form-select-sm" style="width:150px;">
+            <select name="brand_id" class="form-select form-select-sm" style="width:200px;">
                 <option value="">Tất cả thương hiệu</option>
                 @foreach($brands as $b)
                 <option value="{{ $b->id }}" {{ request('brand_id') == $b->id ? 'selected' : '' }}>
@@ -31,19 +31,23 @@
                 @endforeach
             </select>
 
-            <button type="submit" class="btn btn-sm btn-outline-primary">Lọc</button>
-            <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-outline-secondary">Hủy</a>
+            <button type="submit" class="btn btn-sm btn-outline-primary">
+                <i class="fa-duotone fa-solid fa-filter-list"></i>
+            </button>
+            <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa-duotone fa-solid fa-rotate-reverse"></i>
+            </a>
         </form>
 
         <!-- Nhóm nút hành động -->
         <div class="d-flex align-items-center gap-2 flex-wrap">
             <button type="button" class="btn btn-sm btn-outline-warning" title="Nhập Excel" data-bs-toggle="modal"
                 data-bs-target="#importModal">
-                <i class="fa fa-upload"></i>
+                <i class="fa-duotone fa-solid fa-upload"></i>
             </button>
 
             <a href="{{ route('admin.products.export') }}" class="btn btn-sm btn-outline-success" title="Xuất Excel">
-                <i class="fa fa-file-excel"></i>
+                <i class="fa-duotone fa-solid fa-file-excel"></i>
             </a>
 
             <button type="button" class="btn btn-sm btn-primary px-3" data-bs-toggle="modal"
@@ -105,13 +109,13 @@
                         data-category="{{ $p->category_id }}" data-brand="{{ $p->brand_id }}"
                         data-price="{{ $p->price }}" data-stock="{{ $p->stock }}"
                         data-description="{{ $p->description }}" data-image="{{ $p->image }}"
-                        data-tags='@json($p->tags->pluck("id"))'>
-                        <i class="fa fa-edit"></i>
+                        data-tags='@json($p->tags->pluck("id"))' data-status="{{ $p->status }}">
+                        <i class="fa-duotone fa-solid fa-edit"></i>
                     </button>
 
                     <button type="button" class="btn btn-sm btn-outline-danger deleteBtn" data-bs-toggle="modal"
                         data-bs-target="#deleteModal" data-id="{{ $p->id }}" data-name="{{ $p->name }}">
-                        <i class="fa fa-trash"></i>
+                        <i class="fa-duotone fa-solid fa-trash"></i>
                     </button>
                 </td>
             </tr>
@@ -128,6 +132,7 @@
 
 <!-- =============== MODALS =============== -->
 @include('admin.products._modals')
+
 @endsection
 
 @push('scripts')
@@ -148,6 +153,10 @@
                         }
                     });
                     if (!res.ok) throw new Error();
+                    const data = await res.json();
+                    const editBtn = document.querySelector(`.editBtn[data-id="${id}"]`);
+                    if (editBtn) editBtn.dataset.status = data.status ? 1 : 0;
+
                 } catch {
                     alert('Lỗi khi cập nhật trạng thái');
                     input.checked = !input.checked;
@@ -176,6 +185,9 @@
             form.querySelector('[name="price"]').value = btn.dataset.price;
             form.querySelector('[name="stock"]').value = btn.dataset.stock;
             form.querySelector('[name="description"]').value = btn.dataset.description || '';
+
+            const statusCheckbox = form.querySelector('[name="status"]');
+            statusCheckbox.checked = btn.dataset.status === '1';
 
             // === Preview ảnh ===
             const preview = editModal.querySelector('#editPreviewImage');

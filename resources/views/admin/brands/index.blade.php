@@ -7,26 +7,33 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
         <h4 class="fw-bold mb-0">Thương hiệu</h4>
 
-        <form action="{{ route('admin.brands.index') }}" method="GET" class="d-flex align-items-center gap-2 flex-wrap"
+        <form action="{{ route('admin.brands.index') }}" method="GET" class="d-flex align-items-center gap-2"
             style="max-width: 400px;">
             <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
                 placeholder="Tìm theo tên hoặc slug...">
-            <button type="submit" class="btn btn-sm btn-outline-primary">Tìm</button>
-            <a href="{{ route('admin.brands.index') }}" class="btn btn-sm btn-outline-secondary">Hủy</a>
+            <button type="submit" class="btn btn-sm btn-outline-primary">
+                <i class="fa-duotone fa-solid fa-filter-list"></i>
+            </button>
+            <a href="{{ route('admin.brands.index') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa-duotone fa-solid fa-rotate-reverse"></i>
+            </a>
         </form>
 
         <div class="d-flex align-items-center gap-2 flex-wrap">
             <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
                 data-bs-target="#importModal" title="Nhập Excel">
-                <i class="fa fa-upload"></i>
+                <i class="fa-duotone fa-solid fa-upload"></i>
             </button>
 
             <a href="{{ route('admin.brands.export') }}" class="btn btn-sm btn-outline-success" title="Xuất Excel">
-                <i class="fa fa-file-excel"></i>
+                <i class="fa-duotone fa-solid fa-file-excel"></i>
             </a>
 
-            <button type="button" class="btn btn-sm btn-primary px-3" data-bs-toggle="modal"
-                data-bs-target="#createModal">+ Thêm</button>
+            <button type="button" class="btn btn-sm btn-outline-primary px-3" data-bs-toggle="modal"
+                data-bs-target="#createModal">
+                <i class="fa-duotone fa-light fa-plus-large"></i>
+
+            </button>
         </div>
     </div>
 
@@ -62,12 +69,12 @@
                     <button type="button" class="btn btn-sm btn-outline-secondary editBtn" data-id="{{ $brand->id }}"
                         data-name="{{ $brand->name }}" data-description="{{ $brand->description }}"
                         data-logo="{{ $brand->logo }}" data-bs-toggle="modal" data-bs-target="#editModal">
-                        <i class="fa fa-edit"></i>
+                        <i class="fa-duotone fa-edit"></i>
                     </button>
 
                     <button type="button" class="btn btn-sm btn-outline-danger deleteBtn" data-id="{{ $brand->id }}"
                         data-name="{{ $brand->name }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <i class="fa fa-trash"></i>
+                        <i class="fa-duotone fa-trash"></i>
                     </button>
                 </td>
             </tr>

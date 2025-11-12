@@ -5,7 +5,7 @@
 @section('content')
 <div class="card p-4 shadow-sm">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <h4 class="fw-bold mb-0">User Management</h4>
+        <h4 class="fw-bold mb-0">User</h4>
 
         <!-- Filter -->
         <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-center gap-2 flex-wrap"
@@ -14,14 +14,14 @@
                 placeholder="Search by name or email...">
 
             <select name="role" class="form-select form-select-sm" style="width:150px;">
-                <option value="">All Roles</option>
+                <option value="">Vai trò</option>
                 <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="staff" {{ request('role') === 'staff' ? 'selected' : '' }}>Staff</option>
                 <option value="customer" {{ request('role') === 'customer' ? 'selected' : '' }}>Customer</option>
             </select>
 
             <button type="submit" class="btn btn-sm btn-outline-primary">
-                <i class="fa-solid fa-filter-list"></i>
+                <i class="fa-duotone fa-solid fa-filter-list"></i>
             </button>
             <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-outline-secondary">
                 <i class="fa-duotone fa-solid fa-rotate-reverse"></i>
@@ -32,15 +32,15 @@
         <div class="d-flex align-items-center gap-2 flex-wrap">
             <button type="button" class="btn btn-sm btn-outline-warning" title="Import Excel" data-bs-toggle="modal"
                 data-bs-target="#importModal">
-                <i class="fa fa-upload"></i>
-            </button>
+                <i class="fa-duotone fa-solid fa-upload"></i> </button>
 
             <a href="{{ route('admin.users.export') }}" class="btn btn-sm btn-outline-success" title="Export Excel">
-                <i class="fa fa-file-excel"></i>
-            </a>
+                <i class="fa-duotone fa-regular fa-file-excel"></i> </a>
 
-            <button type="button" class="btn btn-sm btn-primary px-3" data-bs-toggle="modal"
-                data-bs-target="#createModal">+ Add</button>
+            <button type="button" class="btn btn-sm btn-outline-primary px-3" data-bs-toggle="modal"
+                data-bs-target="#createModal">
+                <i class="fa-duotone fa-solid fa-user-plus"></i>
+            </button>
         </div>
     </div>
 
@@ -82,12 +82,12 @@
                     <button type="button" class="btn btn-sm btn-outline-secondary editBtn" data-bs-toggle="modal"
                         data-bs-target="#editModal" data-id="{{ $u->id }}" data-name="{{ $u->name }}"
                         data-email="{{ $u->email }}" data-role="{{ $u->role }}">
-                        <i class="fa fa-edit"></i>
+                        <i class="fa-duotone fa-solid fa-edit"></i>
                     </button>
 
                     <button type="button" class="btn btn-sm btn-outline-danger deleteBtn" data-bs-toggle="modal"
                         data-bs-target="#deleteModal" data-id="{{ $u->id }}" data-name="{{ $u->name }}">
-                        <i class="fa fa-trash"></i>
+                        <i class="fa-duotone fa-solid fa-trash"></i>
                     </button>
                 </td>
             </tr>
