@@ -14,7 +14,24 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'status',
     ];
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isStaff()
+    {
+        return $this->role === 'staff';
+    }
+
+    public function isCustomer()
+    {
+        return $this->role === 'customer';
+    }
 
     protected $hidden = [
         'password',

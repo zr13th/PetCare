@@ -50,6 +50,10 @@
                     href="{{ route('admin.tags.index') }}">
                     <i class="fa-regular fa-send-backward"></i> Tag
                 </a>
+                <a class="nav-link {{ request()->is('admin/tags*') ? 'active' : '' }}"
+                    href="{{ route('admin.users.index') }}">
+                    <i class="fa-regular fa-send-backward"></i> User
+                </a>
             </nav>
 
             <div class="mt-auto small text-secondary text-center">
